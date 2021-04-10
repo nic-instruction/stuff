@@ -47,6 +47,11 @@ gcloud compute instance-templates create nucleus-backend-template \
 --image-family=debian-9 \
 --image-project=debian-cloud \
 --metadata-from-file startup-script=startup.sh
+
+# Create the group that will populate instances based on the template
+
+gcloud compute instance-groups managed create nucleus-backend-group \
+--template=nucleus-backend-template --size=2 --zone=us-east1-b
    
 
 # Handle load ballancer, create rule to send traffic to port 80 in the backend group
