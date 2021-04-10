@@ -1,14 +1,14 @@
-Cloud shell
+# Cloud shell
 
-Create and Manage Cloud Resources: Challenge Lab
+# Create and Manage Cloud Resources: Challenge Lab
 
-Set compute zone gcloud config set compute/zone us-east1-b
+# Set compute zone gcloud config set compute/zone us-east1-b
 
 gcloud compute instances create nucleus-jumphost --machine-type=f1-micro
 
 
 
-Kubernetes
+# Kubernetes
 
 gcloud config set compute/zone us-east1-b
 
