@@ -1,5 +1,7 @@
 # Cloud shell
 
+# Network diagram https://cloud.google.com/load-balancing/docs/network/transition-to-backend-services
+
 # Create and Manage Cloud Resources: Challenge Lab
 
 # Set compute zone gcloud config set compute/zone us-east1-b
