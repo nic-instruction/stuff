@@ -1,0 +1,161 @@
+Cloud shell
+
+Create and Manage Cloud Resources: Challenge Lab
+gcloud compute instance-templates create nucleus-backend-template \
+   --region=us-east1 \
+   --network=default \
+   --subnet=default \
+   --tags=allow-health-check \
+   --image-family=debian-9 \
+   --image-project=debian-cloud \
+   --metadata=startup-script='#! /bin/bash 
+apt-get update 
+apt-get install -y nginx 
+service nginx start 
+sed -i -- \’s/nginx/Google Cloud Platform - \’”$HOSTNAME”\’/\’ /var/www/html/index.nginx-debian.html'
+
+
+
+list account name: gcloud auth list
+
+
+lis project id gcloud config list project
+
+
+Set compute zone gcloud config set compute/zone us-east1-b
+
+gcloud compute instances create nucleus-jumphost --machine-type=f1-micro
+
+
+
+Jump host:
+	•	Name the instance nucleus-jumphost.
+	•	Use an f1-micro machine type.
+	•	Use the default image type (Debian Linux).
+
+
+
+
+Kubernetes
+
+us-east1-b 
+
+gcloud config set compute/zone us-east1-b
+
+
+replace hello-server with other server name
+
+Create cluster: gcloud container clusters create nucleus-cluster
+Get Cluster Credentials:
+
+ gcloud container clusters get-credentials nucleus-cluster
+
+New Deployment: kubectl create deployment nucleus-cluster --image=gcr.io/google-samples/hello-app:2.0
+
+Kubernetes service: kubectl expose deployment nucleus-cluster --type=LoadBalancer --port 8080
+
+
+To inspect: kubectl get service
+
+
+To delete the cluster: gcloud container clusters delete [CLUSTER-NAME]
+
+
+
+
+
+
+Load ballancer
+
+Load ballancer template:
+
+
+gcloud compute instance-templates create nucleus-backend-template \
+—-metadata-from-file startup-script=startup.sh
+
+#Managed instance group template:
+
+gcloud compute instance-templates create nucleus-backend-template \   
+--region=us-east1 \
+--network=default \
+--subnet=default \
+--tags=allow-health-check \
+--image-family=debian-9 \
+--image-project=debian-cloud \
+--metadata-from-file startup-script=startup.sh
+   
+
+
+gcloud compute instance-groups managed \
+set-named-ports nucleus-backend-group \
+--named-ports http:80
+
+
+#Health check fW rule:
+
+gcloud compute firewall-rules create nucleus-allow-health-check \
+    --network=default \
+    --action=allow \
+    --direction=ingress \
+    --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+    --target-tags=allow-health-check \
+    --rules=tcp:80
+
+#Set global static external ip
+
+gcloud compute addresses create nucleus-ipv4-1 \
+    --ip-version=IPV4 \
+    --global
+
+
+#Make note of that address:
+
+gcloud compute addresses describe nucleus-ipv4-1 \
+    --format="get(address)" \
+    --global
+
+
+
+#Health check for load balancer:
+
+gcloud compute health-checks create http http-basic-check \
+        --port 80
+
+#create backend service:
+
+    gcloud compute backend-services create nucleus-backend-service \
+        --protocol=HTTP \
+        --port-name=http \
+        --health-checks=http-basic-check \
+        --global
+
+#Add your instance groups:
+
+    gcloud compute backend-services add-backend nucleus-backend-service  \
+        --instance-group=nucleus-backend-group \
+        --instance-group-zone=us-east1-b \
+        --global
+
+
+#Create URL Map
+
+    gcloud compute url-maps create web-map-http \
+        --default-service nucleus-backend-service 
+
+#Create proxy:
+
+    gcloud compute target-http-proxies create http-nucleus-proxy \
+        --url-map web-map-http
+
+
+#Global forwarding rule:
+
+    gcloud compute forwarding-rules create http-content-rule \
+        --address=nucleus-ipv4-1\
+        --global \
+        --target-http-proxy=http-nucleus-proxy \
+        --ports=80
+
+
+#Special Sauce
+gcloud compute instance-groups managed set-named-ports nucleus-backend-group --named-ports http:80
