@@ -10,9 +10,9 @@ phpinfo ();
 
 systemctl start httpd
 
-# upload files
-# mv /home/nicolebade/helloworld\ \(1\).zip /var/www/html (replace nicolebade with your username)
-# Now you can go to http://34.68.83.204/helloworld/index.php  (replace 34.68.83.204 with your ip) and see a page
+git clone https://github.com/nic-instruction/stuff.git
 
-# edit everything to connect to your database server!  (connection is in functions)
+cp stuff/app/* /var/www/html/
+
+# Then cd to /var/www/html/ and edit the php files to have your db address and connection info.
 
