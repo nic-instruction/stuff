@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum -y install httpd mod_php php-mysql mod_ssl unzip
+yum -y install httpd mod_php php-mysql mod_ssl unzip git
 
 echo "<?php
 
