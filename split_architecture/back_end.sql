@@ -17,3 +17,4 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON `back\_end`.* TO 'MyApp'@'%';
 # put in 
 # bind-address = 0.0.0.0
 # right below # instructions in http://fedoraproject.org/wiki/Systemd
+# You can automate this via sed with line number insertion
