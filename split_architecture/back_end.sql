@@ -1,3 +1,8 @@
+# See your postgres script from NTI-310 for sql automation
+# you will need to use the mysql client, instead of the postgres client
+# don't forget to include the items from https://github.com/nic-instruction/itc-220/wiki/MariaDB-MySQL-with-phpMyAdmin-front-end 
+# and update them for automation.
+
 CREATE DATABASE back_end;
 
 USE back_end;
