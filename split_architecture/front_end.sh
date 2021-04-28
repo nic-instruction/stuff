@@ -8,6 +8,7 @@ phpinfo ();
 
 ?>" > /var/www/html/info.php
 
+systemctl enable httpd
 systemctl start httpd
 
 git clone https://github.com/nic-instruction/stuff.git
