@@ -31,4 +31,14 @@ gcloud compute instance-groups managed create ig-us-2 \
     --zone us-central1-c \
     --size 2 \
     --template ig-us-template
+
+# create a firewall rule that allows network-1b tagged instances to come in on port 80
+
+gcloud compute firewall-rules create allow-network-lb \
+    --target-tags network-lb \
+    --allow tcp:80    
     
+# configure static ip address for load balancer
+
+gcloud compute addresses create network-lb-ip \
+    --region us-central1
