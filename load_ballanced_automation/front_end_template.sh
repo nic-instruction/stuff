@@ -42,3 +42,25 @@ gcloud compute firewall-rules create allow-network-lb \
 
 gcloud compute addresses create network-lb-ip \
     --region us-central1
+
+# create tcp health check
+
+gcloud compute health-checks create tcp tcp-health-check \
+    --region us-central1 \
+    --port 80
+    
+# create backend group
+
+gcloud compute backend-services create network-lb-backend-service \
+    --protocol TCP \
+    --health-checks tcp-health-check \
+    --health-checks-region us-central1 \
+    --region us-central1
+    
+# add instance groups to the backend service
+
+gcloud compute backend-services add-backend network-lb-backend-service \
+--instance-group ig-us-1 \
+--instance-group-zone us-central1-a \
+--region us-central1
+
