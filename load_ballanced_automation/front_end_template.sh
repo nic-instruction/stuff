@@ -80,5 +80,5 @@ gcloud compute forwarding-rules create network-lb-forwarding-rule \
     
 # get the forwarding rule ip address
 
-gcloud compute forwarding-rules describe network-lb-forwarding-rule --region us-central1 | grep IPAddress: | awk -F ":" '{print $2}'
+routingIp=$(gcloud compute forwarding-rules describe network-lb-forwarding-rule --region us-central1 | grep IPAddress: | awk -F ":" '{print $2}')
     
