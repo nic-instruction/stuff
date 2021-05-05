@@ -64,3 +64,21 @@ gcloud compute backend-services add-backend network-lb-backend-service \
 --instance-group-zone us-central1-a \
 --region us-central1
 
+gcloud compute backend-services add-backend network-lb-backend-service \
+--instance-group ig-us-2 \
+--instance-group-zone us-central1-c \
+--region us-central1
+
+# create a forwarding rule to route incoming tcp traffic to the backend service
+
+gcloud compute forwarding-rules create network-lb-forwarding-rule \
+    --load-balancing-scheme external \
+    --region us-central1 \
+    --ports 80 \
+    --address network-lb-ip \
+    --backend-service network-lb-backend-service
+    
+# get the forwarding rule ip address
+
+gcloud compute forwarding-rules describe network-lb-forwarding-rule --region us-central1 | grep IPAddress: | awk -F ":" '{print $2}'
+    
