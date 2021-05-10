@@ -37,7 +37,6 @@ gcloud compute instance-groups managed delete ig-us-1
 gcloud compute instance-groups managed delete ig-us-2
 
 
-
 # delete instance template
 gcloud compute instance-templates delete ig-us-template
 
