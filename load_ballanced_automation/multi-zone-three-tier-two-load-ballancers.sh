@@ -84,7 +84,7 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-ca \
 gcloud compute instance-groups managed create nic-load-balancing-ig-cb \
     --zone us-central1-c \
     --size 2 \
-    --template template nic-load-balancing-template
+    --template nic-load-balancing-template
   
 # create instance group that will refrence template (in west1-a zone)
 gcloud compute instance-groups managed create nic-load-balancing-ig-wa \
