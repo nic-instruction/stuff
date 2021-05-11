@@ -112,6 +112,7 @@ gcloud compute health-checks create http hc-http-80 \
 gcloud compute backend-services create nic-load-balancing-backend-service-lb-w1 \
     --load-balancing-scheme=internal \
     --protocol=tcp \
+    --network=nic-load-balancing-network \
     --region=us-west1 \
     --health-checks=hc-http-80 \
     --health-checks-region=us-west1
@@ -120,6 +121,7 @@ gcloud compute backend-services create nic-load-balancing-backend-service-lb-w1 
 gcloud compute backend-services create nic-load-balancing-backend-service-lb-c1 \
     --load-balancing-scheme=internal \
     --protocol=tcp \
+    --network=nic-load-balancing-network \
     --region=us-central1 \
     --health-checks=hc-http-80 \
     --health-checks-region=us-central1
@@ -145,3 +147,27 @@ gcloud compute backend-services add-backend nic-load-balancing-backend-service-l
     --region=us-central1 \
     --instance-group=nic-load-balancing-ig-cc \
     --instance-group-zone=us-central1-c
+    
+# Create forwarding rule pointing to w1's backend service.  Specify an internal IP in their range
+gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule-w1 \
+    --region=us-west1 \
+    --load-balancing-scheme=internal \
+    --network=nic-load-balancing-network \
+    --subnet=nic-load-balancing-network-subnet \
+    --address=10.1.2.99 \
+    --ip-protocol=TCP \
+    --ports=80 \
+    --backend-service=nic-load-balancing-backend-service-lb-w1 \
+    --backend-service-region=us-west1
+    
+ # Create forwarding rule pointing to c1's backend service.  Specify an internal IP in their range
+ gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule-c1 \
+    --region=us-central1 \
+    --load-balancing-scheme=internal \
+    --network=nic-load-balancing-network \
+    --subnet=nic-load-balancing-network-subnet \
+    --address=10.1.3.99 \
+    --ip-protocol=TCP \
+    --ports=80 \
+    --backend-service=nic-load-balancing-backend-service-lb-c1 \
+    --backend-service-region=us-central1
