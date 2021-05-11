@@ -107,3 +107,19 @@ gcloud compute health-checks create http hc-http-80 \
 gcloud compute health-checks create http hc-http-80 \
     --region=us-central1 \
     --port=80
+    
+# create new backend service for west1
+gcloud compute backend-services create nic-load-balancing-backend-service-lb-w1 \
+    --load-balancing-scheme=internal \
+    --protocol=tcp \
+    --region=us-west1 \
+    --health-checks=hc-http-80 \
+    --health-checks-region=us-west1
+
+# create new backend service for central1
+gcloud compute backend-services create nic-load-balancing-backend-service-lb-c1 \
+    --load-balancing-scheme=internal \
+    --protocol=tcp \
+    --region=us-central1 \
+    --health-checks=hc-http-80 \
+    --health-checks-region=us-central1
