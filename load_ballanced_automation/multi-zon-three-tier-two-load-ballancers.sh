@@ -34,4 +34,20 @@ gcloud compute firewall-rules create fw-allow-nic-load-balancing-network-access 
     --source-ranges=10.1.2.0/24,10.1.3.0/24 \
     --rules=tcp,udp,icmp
     
+# Allow ssh from anywhere to instances tagged with allow-ssh on the network (if you don't put a source range, gcloud compute firewall-rules
+# interprets that as 'from anywhere', just a heads up!)
+gcloud compute firewall-rules create fw-allow-ssh \
+    --network=nic-load-balancing-network \
+    --action=allow \
+    --direction=ingress \
+    --target-tags=allow-ssh \
+    --rules=tcp:22
     
+# Allow Google healthchecks (we'll need these for our clusters/pools/backend-service instance groups)
+gcloud compute firewall-rules create fw-allow-health-check \
+    --network=nic-load-balancing-network \
+    --action=allow \
+    --direction=ingress \
+    --target-tags=allow-health-check \
+    --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+    --rules=tcp,udp,icmp
