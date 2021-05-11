@@ -171,3 +171,49 @@ gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule-w1 \
     --ports=80 \
     --backend-service=nic-load-balancing-backend-service-lb-c1 \
     --backend-service-region=us-central1
+    
+ # configure global access
+ #gcloud compute forwarding-rules update nic-load-balancing-forwarding-rule-w1 \
+ #  --region=us-west1 \
+ #  --allow-global-access
+   
+ gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule \
+    --load-balancing-scheme external \
+    --ports 80 \
+    --address network-lb-ip \
+    --backend-service nic-load-balancing-backend-service-lb-w1 
+    
+    
+gcloud compute addresses create lb-ipv4-1 \
+  --ip-version=IPV4 \
+  --global
+ 
+ # DB BACKENDS
+ 
+ # Create a subnet of our new network on us-west1
+gcloud compute networks subnets create nic-db-backend-network-subnet \
+    --network=nic-load-balancing-network \
+    --range=10.1.4.0/24 \
+    --region=us-west1
+
+# Create a subnet of our new network on us-central1
+gcloud compute networks subnets create nic-db-backend-network-subnet \
+    --network=nic-load-balancing-network \
+    --range=10.1.5.0/24 \
+    --region=us-central1
+    
+    
+# create fw rules
+
+gcloud compute firewall-rules create fw-allow-db-backend-network-access \
+    --network=nic-load-balancing-network \
+    --action=allow \
+    --direction=ingress \
+    --source-ranges=10.1.4.0/24,10.1.5.0/24 \
+    --rules=tcp,udp,icmp
+    
+# ssh is already in place.  No health check for now
+
+# db cluster configuration is a thing with a r/w node and ro nodes, we won't do that in this script because I don't have time today
+# but we'll cover it in class and script it.
+
