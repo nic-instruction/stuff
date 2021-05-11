@@ -106,7 +106,23 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-wc \
     --zone us-west1-c \
     --size 2 \
     --template nic-load-balancing-template 
-
+    
+gcloud compute instance-groups unmanaged set-named-ports nic-load-balancing-ig-ca \
+    --named-ports http:80 \
+    --zone us-central1-c
+    
+gcloud compute instance-groups unmanaged set-named-ports create nic-load-balancing-ig-cc \
+    --named-ports http:80 \
+    --zone us-central1-c
+    
+gcloud compute instance-groups unmanaged set-named-ports create nic-load-balancing-ig-wa \
+    --named-ports http:80 \
+    --zone us-west1-a
+    
+gcloud compute instance-groups unmanaged set-named-ports create nic-load-balancing-ig-wc \
+    --named-ports http:80 \
+    --zone us-west1-c
+    
 # set named ports!!!!
 
 
