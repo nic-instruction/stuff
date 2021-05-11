@@ -32,6 +32,12 @@ gcloud compute firewall-rules delete fw-allow-health-check --quiet
 gcloud compute firewall-rules delete fw-allow-ssh --quiet
 gcloud compute firewall-rules delete fw-allow-nic-load-balancing-network-access --quiet
 
+# delete the subnets
+gcloud compute networks subnets delete nic-db-backend-network-subnet --region us-west1 --quiet
+gcloud compute networks subnets delete nic-db-backend-network-subnet --region us-central1 --quiet
+gcloud compute networks subnets delete nic-load-balancing-network-subnet --region us-central1 --quiet
+gcloud compute networks subnets delete nic-load-balancing-network-subnet --region us-west1 --quiet
+
 # delete the network
 gcloud compute networks delete nic-load-balancing-network --quiet
 
