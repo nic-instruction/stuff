@@ -20,24 +20,24 @@ gcloud compute backend-services remove-backend network-lb-backend-service \
 
 # delete backend group
 gcloud compute backend-services delete network-lb-backend-service \
---protocol TCP \
---health-checks tcp-health-check \
---health-checks-region us-central1 \
 --region us-central1
 
 # delete tcp health check (removed tcp fom btwn delete and tcp-health)
-gcloud compute health-checks delete tcp-health-check
+gcloud compute health-checks delete tcp-health-check \
+--region us-central1
 
 
 # remove static ip address for load balancer
-gcloud compute addresses delete network-lb-ip
+gcloud compute addresses delete network-lb-ip \
+--region us-central1
 
 
-# delete instance groups that will reference template 
-gcloud compute instance-groups managed delete ig-us-1
+# delete instance groups that will reference template 80 and 82
+gcloud compute instance-groups managed delete ig-us-1 \
+--zone us-central1-a
 
-gcloud compute instance-groups managed delete ig-us-2
-
+gcloud compute instance-groups managed delete ig-us-2 \
+--zone us-central1-c
 
 # delete instance template
 gcloud compute instance-templates delete ig-us-template
