@@ -51,3 +51,49 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --target-tags=allow-health-check \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp,udp,icmp
+    
+# So far we've made a couple deviations from the tutorial, here, we're going to use managed instance groups with a template
+# added tag --tags=allow-ssh,allow-health-check to previous automation template
+gcloud compute instance-templates create nic-load-balancing-template \
+--region=us-central1 \
+--tags=nic-load-balancing-network \
+--image-family=centos-7 \
+--image-project=centos-cloud \
+--machine-type=f1-micro \
+--tags=allow-ssh,allow-health-check 
+--metadata=startup-script='#! /bin/bash
+yum -y install httpd mod_php php-mysql mod_ssl unzip git
+echo "<?php
+phpinfo ();
+?>" > /var/www/html/info.php
+systemctl enable httpd
+systemctl start httpd
+setsebool -P httpd_can_network_connect_db=1
+git clone https://github.com/nic-instruction/stuff.git
+cp stuff/app/* /var/www/html/'
+
+# create instance group that will reference template (in central1-a zone)
+
+gcloud compute instance-groups managed create nic-load-balancing-ig-ca \
+    --zone us-central1-a \
+    --size 2 \
+    --template nic-load-balancing-template 
+    
+# create instance group that will reference template (in central1-c zone)
+
+gcloud compute instance-groups managed create nic-load-balancing-ig-cb \
+    --zone us-central1-c \
+    --size 2 \
+    --template template nic-load-balancing-template
+  
+# create instance group that will refrence template (in west1-a zone)
+gcloud compute instance-groups managed create nic-load-balancing-ig-wa \
+    --zone us-west1-a \
+    --size 2 \
+    --template nic-load-balancing-template 
+
+# create instance group that will reference template (in west1-c zone)
+gcloud compute instance-groups managed create nic-load-balancing-ig-wc \
+    --zone us-west1-c \
+    --size 2 \
+    --template nic-load-balancing-template 
