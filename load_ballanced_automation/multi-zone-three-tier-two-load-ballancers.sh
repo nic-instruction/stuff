@@ -107,7 +107,47 @@ gcloud compute health-checks create http hc-http-80 \
 gcloud compute health-checks create http hc-http-80 \
     --region=us-central1 \
     --port=80
+
+gcloud compute health-checks create http http-basic-check
     
+gcloud compute backend-services create web-map-backend-service \
+    --protocol HTTP \
+    --health-checks http-basic-check \
+    --global   
+    
+
+gcloud compute backend-services add-backend web-map-backend-service \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8 \
+    --capacity-scaler 1 \
+    --instance-group=nic-load-balancing-ig-wa \
+    --instance-group-zone=us-west1-a \
+    --global
+    
+gcloud compute backend-services add-backend web-map-backend-service \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8 \
+    --capacity-scaler 1 \
+    --instance-group=nic-load-balancing-ig-wc \
+    --instance-group-zone=us-west1-c \
+    --global
+    
+gcloud compute backend-services add-backend web-map-backend-service \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8 \
+    --capacity-scaler 1 \
+    --instance-group=nic-load-balancing-ig-ca \
+    --instance-group-zone=us-central1-a \
+    --global
+    
+gcloud compute backend-services add-backend web-map-backend-service \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8 \
+    --capacity-scaler 1 \
+    --instance-group=nic-load-balancing-ig-cc \
+    --instance-group-zone=us-central1-c \
+    --global
+#  REMOVE FROM HERE TO    
 # create new backend service for west1
 gcloud compute backend-services create nic-load-balancing-backend-service-lb-w1 \
     --load-balancing-scheme=internal \
@@ -187,7 +227,8 @@ gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule-w1 \
 gcloud compute addresses create lb-ipv4-1 \
   --ip-version=IPV4 \
   --global
- 
+  
+# HERE  CUT IT ALLL!!!! (IF THIS WORKS) 
  # DB BACKENDS
  
  # Create a subnet of our new network on us-west1
