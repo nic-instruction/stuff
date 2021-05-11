@@ -153,7 +153,10 @@ gcloud compute url-maps create web-map \
     
 gcloud compute target-http-proxies create http-lb-proxy \
     --url-map web-map
-    
+
+gcloud compute addresses create lb-ipv4-1 \
+  --ip-version=IPV4 \
+  --global    
     
 external_addy=$(gcloud compute addresses list | grep lb-ipv4-1 | awk '{print $2}')
 
@@ -170,84 +173,9 @@ forwarding_rule_addy=$(gcloud compute forwarding-rules list | grep http-cr-rule 
 
 #  REMOVE FROM HERE TO    
 # create new backend service for west1
-gcloud compute backend-services create nic-load-balancing-backend-service-lb-w1 \
-    --load-balancing-scheme=internal \
-    --protocol=tcp \
-    --network=nic-load-balancing-network \
-    --region=us-west1 \
-    --health-checks=hc-http-80 \
-    --health-checks-region=us-west1
 
-# create new backend service for central1
-gcloud compute backend-services create nic-load-balancing-backend-service-lb-c1 \
-    --load-balancing-scheme=internal \
-    --protocol=tcp \
-    --network=nic-load-balancing-network \
-    --region=us-central1 \
-    --health-checks=hc-http-80 \
-    --health-checks-region=us-central1
     
-# add instance groups to the backend service - west1    
-gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-w1 \
-    --region=us-west1 \
-    --instance-group=nic-load-balancing-ig-wa \
-    --instance-group-zone=us-west1-a
-    
-gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-w1 \
-    --region=us-west1 \
-    --instance-group=nic-load-balancing-ig-wc \
-    --instance-group-zone=us-west1-c
-    
-# add instance groups to the backend service - central1    
-gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-c1 \
-    --region=us-central1 \
-    --instance-group=nic-load-balancing-ig-ca \
-    --instance-group-zone=us-central1-a
-    
-gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-c1 \
-    --region=us-central1 \
-    --instance-group=nic-load-balancing-ig-cc \
-    --instance-group-zone=us-central1-c
-    
-# Create forwarding rule pointing to w1's backend service.  Specify an internal IP in their range
-gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule-w1 \
-    --region=us-west1 \
-    --load-balancing-scheme=internal \
-    --network=nic-load-balancing-network \
-    --subnet=nic-load-balancing-network-subnet \
-    --address=10.1.2.99 \
-    --ip-protocol=TCP \
-    --ports=80 \
-    --backend-service=nic-load-balancing-backend-service-lb-w1 \
-    --backend-service-region=us-west1
-    
- # Create forwarding rule pointing to c1's backend service.  Specify an internal IP in their range
- gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule-c1 \
-    --region=us-central1 \
-    --load-balancing-scheme=internal \
-    --network=nic-load-balancing-network \
-    --subnet=nic-load-balancing-network-subnet \
-    --address=10.1.3.99 \
-    --ip-protocol=TCP \
-    --ports=80 \
-    --backend-service=nic-load-balancing-backend-service-lb-c1 \
-    --backend-service-region=us-central1
-    
- # configure global access
- #gcloud compute forwarding-rules update nic-load-balancing-forwarding-rule-w1 \
- #  --region=us-west1 \
- #  --allow-global-access
-   
- gcloud compute forwarding-rules create nic-load-balancing-forwarding-rule \
-    --load-balancing-scheme external \
-    --ports 80 \
-    --address network-lb-ip \
-    --backend-service nic-load-balancing-backend-service-lb-w1 
-    
-    
-gcloud compute addresses create lb-ipv4-1 \
-  --ip-version=IPV4 \
-  --global
+
   
 # HERE  CUT IT ALLL!!!! (IF THIS WORKS) 
  # DB BACKENDS
