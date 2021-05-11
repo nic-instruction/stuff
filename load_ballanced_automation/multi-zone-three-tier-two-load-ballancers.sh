@@ -147,6 +147,27 @@ gcloud compute backend-services add-backend web-map-backend-service \
     --instance-group=nic-load-balancing-ig-cc \
     --instance-group-zone=us-central1-c \
     --global
+    
+gcloud compute url-maps create web-map \
+    --default-service web-map-backend-service
+    
+gcloud compute target-http-proxies create http-lb-proxy \
+    --url-map web-map
+    
+    
+external_addy=$(gcloud compute addresses list | grep lb-ipv4-1 | awk '{print $2}')
+
+gcloud compute forwarding-rules create http-cr-rule \
+    --address $external_addy \
+    --global \
+    --target-http-proxy http-lb-proxy \
+    --ports 80
+    
+forwarding_rule_addy=$(gcloud compute forwarding-rules list | grep http-cr-rule | awk '{print $2}')
+
+#problem: backend service is unhealthy.
+
+
 #  REMOVE FROM HERE TO    
 # create new backend service for west1
 gcloud compute backend-services create nic-load-balancing-backend-service-lb-w1 \
