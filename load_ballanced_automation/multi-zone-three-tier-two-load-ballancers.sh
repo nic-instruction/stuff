@@ -51,7 +51,16 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --target-tags=allow-health-check \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp,udp,icmp
+
+# Just added this one, not in the burndown script, and hasn't been tested
+gcloud compute firewall-rules create www-firewall \
+    --network=nic-load-balancing-network \
+    --action=allow \
+    --direction=ingress \
+    --target-tags http-tag --allow tcp:80 \
+    --rules=tcp
     
+
 # So far we've made a couple deviations from the tutorial, here, we're going to use managed instance groups with a template
 # added tag --tags=allow-ssh,allow-health-check to previous automation template
 gcloud compute instance-templates create nic-load-balancing-template \
@@ -60,7 +69,7 @@ gcloud compute instance-templates create nic-load-balancing-template \
 --image-family=centos-7 \
 --image-project=centos-cloud \
 --machine-type=f1-micro \
---tags=allow-ssh,allow-health-check \
+--tags=allow-ssh,allow-health-check,http-tag \
 --metadata=startup-script='#! /bin/bash
 yum -y install httpd mod_php php-mysql mod_ssl unzip git
 echo "<?php
@@ -97,17 +106,21 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-wc \
     --zone us-west1-c \
     --size 2 \
     --template nic-load-balancing-template 
-    
+
+# set named ports!!!!
+
+
 # create new health-check service in west1
-gcloud compute health-checks create http hc-http-80 \
-    --region=us-west1 \
-    --port=80
+#gcloud compute health-checks create http hc-http-80 \
+#    --region=us-west1 \
+#    --port=80
 
 # create new health-check service in central1
-gcloud compute health-checks create http hc-http-80 \
-    --region=us-central1 \
-    --port=80
+#gcloud compute health-checks create http hc-http-80 \
+#    --region=us-central1 \
+#    --port=80
 
+# health check was not in place, possibly this was the issue!
 gcloud compute health-checks create http http-basic-check
     
 gcloud compute backend-services create web-map-backend-service \
