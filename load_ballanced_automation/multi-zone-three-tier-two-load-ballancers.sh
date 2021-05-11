@@ -60,7 +60,7 @@ gcloud compute instance-templates create nic-load-balancing-template \
 --image-family=centos-7 \
 --image-project=centos-cloud \
 --machine-type=f1-micro \
---tags=allow-ssh,allow-health-check 
+--tags=allow-ssh,allow-health-check \
 --metadata=startup-script='#! /bin/bash
 yum -y install httpd mod_php php-mysql mod_ssl unzip git
 echo "<?php
