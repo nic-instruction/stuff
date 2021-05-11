@@ -81,7 +81,7 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-ca \
     
 # create instance group that will reference template (in central1-c zone)
 
-gcloud compute instance-groups managed create nic-load-balancing-ig-cb \
+gcloud compute instance-groups managed create nic-load-balancing-ig-cc \
     --zone us-central1-c \
     --size 2 \
     --template nic-load-balancing-template
@@ -123,3 +123,25 @@ gcloud compute backend-services create nic-load-balancing-backend-service-lb-c1 
     --region=us-central1 \
     --health-checks=hc-http-80 \
     --health-checks-region=us-central1
+    
+# add instance groups to the backend service - west1    
+gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-w1 \
+    --region=us-west1 \
+    --instance-group=nic-load-balancing-ig-wa \
+    --instance-group-zone=us-west1-a
+    
+gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-w1 \
+    --region=us-west1 \
+    --instance-group=nic-load-balancing-ig-wc \
+    --instance-group-zone=us-west1-c
+    
+# add instance groups to the backend service - central1    
+gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-c1 \
+    --region=us-central1 \
+    --instance-group=nic-load-balancing-ig-ca \
+    --instance-group-zone=us-central1-a
+    
+gcloud compute backend-services add-backend nic-load-balancing-backend-service-lb-c1 \
+    --region=us-central1 \
+    --instance-group=nic-load-balancing-ig-cc \
+    --instance-group-zone=us-central1-c
