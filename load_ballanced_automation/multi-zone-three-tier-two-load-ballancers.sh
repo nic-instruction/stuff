@@ -97,3 +97,13 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-wc \
     --zone us-west1-c \
     --size 2 \
     --template nic-load-balancing-template 
+    
+# create new health-check service in west1
+gcloud compute health-checks create http hc-http-80 \
+    --region=us-west1 \
+    --port=80
+
+# create new health-check service in central1
+gcloud compute health-checks create http hc-http-80 \
+    --region=us-central1 \
+    --port=80
