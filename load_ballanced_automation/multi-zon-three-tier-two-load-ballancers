@@ -1,0 +1,5 @@
+#!/bin/bash
+# This is based on design from this doc:
+# with an additional load balancing tier thrown in front of the DB backend for added security
+
+gcloud compute networks create nic-load-balancing-network --subnet-mode=custom
