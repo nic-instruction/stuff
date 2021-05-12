@@ -85,6 +85,26 @@ setsebool -P httpd_can_network_connect_db=1
 git clone https://github.com/nic-instruction/stuff.git
 cp stuff/app/* /var/www/html/'
 
+gcloud compute instance-templates create nic-load-balancing-template-w1 \
+--region=us-west1 \
+--tags=nic-load-balancing-network \
+--subnet=nic-load-balancing-network-subnet \
+--image-family=centos-7 \
+--image-project=centos-cloud \
+--machine-type=f1-micro \
+--tags=allow-ssh,allow-health-check,http-tag \
+--metadata=startup-script='#! /bin/bash
+yum -y install httpd mod_php php-mysql mod_ssl unzip git
+echo "<?php
+phpinfo ();
+?>" > /var/www/html/info.php
+systemctl enable httpd
+systemctl start httpd
+setsebool -P httpd_can_network_connect_db=1
+git clone https://github.com/nic-instruction/stuff.git
+cp stuff/app/* /var/www/html/'
+
+
 
 # create instance group that will reference template (in central1-a zone)
 
@@ -104,13 +124,13 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-cc \
 gcloud compute instance-groups managed create nic-load-balancing-ig-wa \
     --zone us-west1-a \
     --size 2 \
-    --template nic-load-balancing-template 
+    --template nic-load-balancing-template-w1
 
 # create instance group that will reference template (in west1-c zone)
 gcloud compute instance-groups managed create nic-load-balancing-ig-wc \
     --zone us-west1-c \
     --size 2 \
-    --template nic-load-balancing-template 
+    --template nic-load-balancing-template-w1
     
 gcloud compute instance-groups managed set-named-ports nic-load-balancing-ig-ca \
     --named-ports http:80 \
