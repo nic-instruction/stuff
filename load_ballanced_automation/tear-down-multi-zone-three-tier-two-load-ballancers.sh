@@ -31,6 +31,7 @@ gcloud compute instance-templates delete nic-load-balancing-template --quiet
 gcloud compute firewall-rules delete fw-allow-health-check --quiet
 gcloud compute firewall-rules delete fw-allow-ssh --quiet
 gcloud compute firewall-rules delete fw-allow-nic-load-balancing-network-access --quiet
+gcloud compute firewall-rules delete www-firewall --quiet
 
 # delete the subnets
 gcloud compute networks subnets delete nic-db-backend-network-subnet --region us-west1 --quiet
