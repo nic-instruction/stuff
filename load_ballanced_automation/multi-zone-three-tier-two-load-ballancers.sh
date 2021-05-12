@@ -69,6 +69,7 @@ gcloud compute firewall-rules create www-firewall \
 gcloud compute instance-templates create nic-load-balancing-template \
 --region=us-central1 \
 --tags=nic-load-balancing-network \
+--subnet=nic-load-balancing-network-subnet \
 --image-family=centos-7 \
 --image-project=centos-cloud \
 --machine-type=f1-micro \
@@ -83,6 +84,7 @@ systemctl start httpd
 setsebool -P httpd_can_network_connect_db=1
 git clone https://github.com/nic-instruction/stuff.git
 cp stuff/app/* /var/www/html/'
+
 
 # create instance group that will reference template (in central1-a zone)
 
@@ -110,19 +112,19 @@ gcloud compute instance-groups managed create nic-load-balancing-ig-wc \
     --size 2 \
     --template nic-load-balancing-template 
     
-gcloud compute instance-groups unmanaged set-named-ports nic-load-balancing-ig-ca \
+gcloud compute instance-groups managed set-named-ports nic-load-balancing-ig-ca \
     --named-ports http:80 \
     --zone us-central1-c
     
-gcloud compute instance-groups unmanaged set-named-ports create nic-load-balancing-ig-cc \
+gcloud compute instance-groups managed set-named-ports create nic-load-balancing-ig-cc \
     --named-ports http:80 \
     --zone us-central1-c
     
-gcloud compute instance-groups unmanaged set-named-ports create nic-load-balancing-ig-wa \
+gcloud compute instance-groups managed set-named-ports create nic-load-balancing-ig-wa \
     --named-ports http:80 \
     --zone us-west1-a
     
-gcloud compute instance-groups unmanaged set-named-ports create nic-load-balancing-ig-wc \
+gcloud compute instance-groups managed set-named-ports create nic-load-balancing-ig-wc \
     --named-ports http:80 \
     --zone us-west1-c
     
