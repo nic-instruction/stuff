@@ -1,6 +1,9 @@
 #!/bin/bash
-# This is based on design from this doc:
+# This is based on design from this doc: https://cloud.google.com/load-balancing/docs/internal/setting-up-internal#gcloud_1
 # with an additional load balancing tier thrown in front of the DB backend for added security
+# also had to use some features from this: https://www.qwiklabs.com/focuses/642?parent=catalog
+# And in the end, it didn't end up being much like either.  Sigh!  This is a 2 -3 tier system with load ballancers between the pieces on isolated subnets.
+
 
 # Create a new network for our load ballancing shinanagins
 gcloud compute networks create nic-load-balancing-network --subnet-mode=custom
@@ -57,8 +60,8 @@ gcloud compute firewall-rules create www-firewall \
     --network=nic-load-balancing-network \
     --action=allow \
     --direction=ingress \
-    --target-tags http-tag --allow tcp:80 \
-    --rules=tcp
+    --target-tags http-tag \
+    --rules=tcp:80
     
 
 # So far we've made a couple deviations from the tutorial, here, we're going to use managed instance groups with a template
