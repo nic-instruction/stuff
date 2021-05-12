@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Based on: https://cloud.google.com/load-balancing/docs/network/setting-up-network-backend-service#gcloud (with custom template)
+
 # create instance template
 gcloud compute instance-templates create ig-us-template \
 --region=us-central1 \
