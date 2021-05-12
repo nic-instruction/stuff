@@ -1,0 +1,50 @@
+#!/bin/bash
+
+
+# delete the forwarding rule to route incoming tcp traffic to the backend service
+gcloud --quiet compute forwarding-rules delete network-lb-forwarding-rule \
+    --region us-central1
+
+# remove instance groups from the backend service
+gcloud -q compute backend-services remove-backend network-lb-backend-service \
+--instance-group ig-us-1 \
+--instance-group-zone us-central1-a \
+--region us-central1
+
+gcloud -q compute backend-services remove-backend network-lb-backend-service \
+--instance-group ig-us-2 \
+--instance-group-zone us-central1-c \
+--region us-central1
+
+
+# delete backend group
+gcloud -q compute backend-services delete network-lb-backend-service \
+--region us-central1
+
+# delete tcp health check (removed tcp fom btwn delete and tcp-health)
+gcloud -q compute health-checks delete tcp-health-check \
+--region us-central1
+
+
+# remove static ip address for load balancer
+gcloud -q compute addresses delete network-lb-ip \
+--region us-central1
+
+
+# delete instance groups that will reference template 80 and 82
+gcloud -q compute instance-groups managed delete ig-us-1 \
+--zone us-central1-a
+
+gcloud -q compute instance-groups managed delete ig-us-2 \
+--zone us-central1-c
+
+# delete instance template
+gcloud -q compute instance-templates delete ig-us-template
+
+
+# delete the firewall rule that allows network-1b tagged instances to come in on port 80
+gcloud -q compute firewall-rules delete allow-network-lb
+
+#restart firewall??
+
+
