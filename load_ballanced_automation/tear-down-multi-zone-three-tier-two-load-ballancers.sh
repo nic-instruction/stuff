@@ -24,8 +24,9 @@ gcloud compute instance-groups managed delete nic-load-balancing-ig-wa  --zone u
 gcloud compute instance-groups managed delete nic-load-balancing-ig-cc  --zone us-central1-c --quiet
 gcloud compute instance-groups managed delete nic-load-balancing-ig-ca --zone us-central1-a --quiet
 
-# delete instance group template
+# delete instance group templates
 gcloud compute instance-templates delete nic-load-balancing-template --quiet
+gcloud compute instance-templates delete nic-load-balancing-template-w1 --quiet
 
 # remove firewall rules
 gcloud compute firewall-rules delete fw-allow-health-check --quiet
